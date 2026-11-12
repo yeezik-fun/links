@@ -364,10 +364,13 @@
     .product .t { margin-top: 10px; font-size: 0.85rem; font-weight: 600; line-height: 1.3; }
     .product .s { margin-top: 4px; font-size: 0.72rem; color: var(--mute); letter-spacing: 0.06em; text-transform: uppercase; }
 
-    /* --- Riquadro grande (Pre-Save, Out Now) --- */
+    /* --- Riquadro grande orizzontale (Pre-Save, Out Now) ---
+       Artwork quadrato a sinistra, titolo + data + bottone a destra */
     .features { display: flex; flex-direction: column; gap: 12px; }
     .feature {
-      display: block;
+      display: grid;
+      grid-template-columns: 44% 1fr;
+      grid-template-rows: 1fr auto;
       background: var(--card);
       border-radius: 14px;
       overflow: hidden;
@@ -378,21 +381,22 @@
     }
     a.feature:hover, a.feature:focus-visible { background: var(--card-hover); outline: none; }
     a.feature:active { transform: scale(0.99); }
-    .feature .thumb.art { aspect-ratio: 1; width: 100%; }
-    .feature .thumb.art span { font-size: 1.6rem; }
-    .feature .body { display: flex; flex-direction: column; gap: 6px; padding: 16px 16px 4px; }
-    .feature .t { font-size: 1.05rem; line-height: 1.3; }
-    .feature .s { font-size: 0.72rem; color: var(--mute); letter-spacing: 0.06em; text-transform: uppercase; }
+    .feature .thumb.art { grid-row: 1 / span 2; aspect-ratio: 1; width: 100%; align-self: stretch; }
+    .feature .thumb.art span { font-size: 1.1rem; }
+    .feature .body { display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 14px 14px 0; min-width: 0; }
+    .feature .t { font-size: 1.05rem; line-height: 1.25; overflow-wrap: anywhere; }
+    .feature .s { font-size: 0.68rem; color: var(--mute); letter-spacing: 0.06em; text-transform: uppercase; }
     .feature .cta {
       display: flex; align-items: center; justify-content: center;
-      margin: 14px 16px 16px;
-      min-height: 48px;
+      margin: 12px 14px 14px;
+      min-height: 42px;
       border-radius: 10px;
       background: var(--text);
       color: #000;
-      font-size: 0.85rem;
-      letter-spacing: 0.14em;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
+      white-space: nowrap;
     }
     .feature .t, .feature .s, .feature .cta { font-family: var(--font-cards); font-weight: 700; }
 
