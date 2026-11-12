@@ -1861,6 +1861,10 @@ void main() {
              d'esempio con l'etichetta "EXAMPLE" (per lavorare al design).
      false = sito vero: i capitoli vuoti si nascondono da soli. */
   const PREVIEW = true;
+  /* ANTEPRIMA DI TUTTE LE SEZIONI: apri il sito con ?preview alla fine
+     dell'indirizzo (es. …/links/?preview) e vedi TUTTI i capitoli, anche
+     quelli con show: false. Il sito normale resta com'è. */
+  const SHOW_ALL = /[?&]preview\b/.test(location.search);
 
   const SOCIALS = [
     { icon: 'website',    url: 'https://www.yeezik.com' },
@@ -2142,7 +2146,7 @@ void main() {
   };
 
   CHAPTERS.forEach(ch => {
-    if (ch.show === false) return;                       // spento a mano
+    if (ch.show === false && !SHOW_ALL) return;          // spento a mano (tranne con ?preview)
     const build = BUILDERS[ch.type] || BUILDERS.cards;
     const content = build(ch);
     if (!content) return;                                // vuoto → nascosto
