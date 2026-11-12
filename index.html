@@ -460,7 +460,9 @@
         --tile: 176px;                           /* altezza unica dei riquadri */
       }
       .section { padding-top: 48px; padding-bottom: 48px; scroll-margin-top: 72px; }
-      .section h2 { font-size: 1.75rem; margin-bottom: 24px; }
+      .section h2 { font-size: 1.75rem; margin-bottom: 24px; text-align: center; }
+      /* Tutto centrato sullo stesso asse dello schermo iniziale */
+      .chapters { justify-content: center; }
       .chapter { padding: 10px 16px; }
       .chapter:hover { background: #171717; }
       .chapter.active:hover { background: #222; }
@@ -478,6 +480,7 @@
         padding: 0;
         gap: 24px 16px;
         scroll-snap-type: none;
+        justify-content: center;
       }
       .video, .video.only { width: calc(var(--tile) * 16 / 9); }
 
@@ -503,8 +506,9 @@
         --tile: 200px;
       }
       .section h2 { font-size: 2rem; }
-      /* Riquadri orizzontali e card: due per riga */
-      .features, .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+      /* Riquadri orizzontali e card: due per riga, centrati (uno da solo sta in mezzo) */
+      .features, .cards { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 16px; }
+      .features > *, .cards > * { width: calc(50% - 8px); }
     }
 
     /* Cursore a manina solo dove si può cliccare */
