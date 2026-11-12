@@ -436,6 +436,9 @@
     /* Pulsante a destra nelle card (es. "Tickets") */
     .card .go { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
 
+    .content.only-footer .foot { border-top: 0; padding-top: 32px; }
+    .scroll-cue[hidden], .chapters[hidden] { display: none; }
+
     .foot {
       padding: 24px var(--gutter) 0;
       border-top: 1px solid var(--line);
@@ -1904,10 +1907,10 @@ void main() {
       items: [],
     },
     {
-      id: 'releases', title: 'Releases', type: 'releases', show: true,
+      id: 'releases', title: 'Releases', type: 'releases', show: false,
     },
     {
-      id: 'youtube', title: 'YouTube', type: 'videos', show: true,
+      id: 'youtube', title: 'YouTube', type: 'videos', show: false,
       /* Due modi per mettere i video:
          1) channel: l'ID del canale (inizia con "UC…") → un player che
             mostra da solo gli ULTIMI video caricati, senza toccare nulla.
@@ -2150,7 +2153,12 @@ void main() {
     sec.append(content);
     wrap.append(sec);
   });
-  if (!bar.children.length) bar.hidden = true;
+  // Nessun capitolo acceso: niente barra né "Scroll", sotto resta solo il footer
+  if (!bar.children.length) {
+    bar.hidden = true;
+    document.querySelector('.scroll-cue').hidden = true;
+    document.getElementById('content').classList.add('only-footer');
+  }
 
   /* --- Barra dei capitoli: evidenzia quello che stai guardando --- */
   const chips = [...bar.querySelectorAll('.chapter')];
