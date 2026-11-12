@@ -1828,7 +1828,7 @@ void main() {
        icon: website, instagram, tiktok, youtube, spotify, applemusic,
              soundcloud, beatport, facebook, x, threads, twitch, mixcloud,
              bandcamp, email
-       url:  l'indirizzo. Vuoto ('') = icona spenta e non cliccabile.
+       url:  l'indirizzo. Vuoto ('') = icona NASCOSTA (appare quando metti il link).
              Per l'email: 'mailto:tuo@indirizzo.com'
 
      CAPITOLI
@@ -1864,11 +1864,10 @@ void main() {
     { icon: 'instagram',  url: 'https://instagram.com/iamyeezik' },
     { icon: 'tiktok',     url: 'https://www.tiktok.com/@iamyeezik' },
     { icon: 'youtube',    url: 'https://youtube.com/@yeezikmusic?sub_confirmation=1' },
+    { icon: 'spotify',    url: '' },   // nascosta finché non c'è il link
+    { icon: 'applemusic', url: '' },   // nascosta finché non c'è il link
     { icon: 'soundcloud', url: 'https://www.soundcloud.com/yeezikmusic' },
-    // Da aggiungere quando li avrai (togli // all'inizio e metti il link):
-    // { icon: 'spotify',    url: '' },
-    // { icon: 'applemusic', url: '' },
-    // { icon: 'beatport',   url: '' },
+    { icon: 'beatport',   url: '' },   // nascosta finché non c'è il link
   ];
 
   /* LE TUE USCITE — una riga per canzone, in qualsiasi ordine:
@@ -1976,6 +1975,7 @@ void main() {
   /* --- Social --- */
   const socialBox = document.getElementById('socials');
   SOCIALS.forEach(s => {
+    if (!s.url) return;                      // senza link = nascosta
     const el = h(s.url ? 'a' : 'span', 'social' + (s.url ? '' : ' off'), { 'aria-label': LABELS[s.icon] || s.icon, title: LABELS[s.icon] || s.icon });
     if (s.url) { el.href = s.url; if (!s.url.startsWith('mailto:')) { el.target = '_blank'; el.rel = 'noopener'; } }
     el.append(svg(s.icon));
