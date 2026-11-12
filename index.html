@@ -434,6 +434,94 @@
     /* Pulsante a destra nelle card (es. "Tickets") */
     .card .go { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
 
+    /* =====================================================================
+       BORDER GLOW — da React Bits (BorderGlow), convertito in JS/CSS puro.
+       Luce colorata che segue il mouse vicino ai bordi dei riquadri;
+       su telefono fa un giro di luce quando il riquadro entra nello schermo.
+       ===================================================================== */
+    .glow {
+      --edge-proximity: 0;
+      --cursor-angle: 45deg;
+      --edge-sensitivity: 30;
+      --color-sensitivity: calc(var(--edge-sensitivity) + 20);
+      --cone-spread: 25;
+      --glow-padding: 28px;
+      position: relative;
+      display: block;
+      border-radius: var(--glow-radius, 12px);
+      isolation: isolate;
+    }
+    .glow > .g-layer {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 3;
+      transition: opacity 0.25s ease-out;
+    }
+    .glow:not(.g-hover):not(.sweep-active) > .g-layer { opacity: 0 !important; transition: opacity 0.75s ease-in-out; }
+
+    /* bordo colorato (mesh gradient) */
+    .glow > .g-border {
+      opacity: calc((var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+      -webkit-mask-image: conic-gradient(from var(--cursor-angle) at center, black calc(var(--cone-spread) * 1%), transparent calc((var(--cone-spread) + 15) * 1%), transparent calc((100 - var(--cone-spread) - 15) * 1%), black calc((100 - var(--cone-spread)) * 1%));
+              mask-image: conic-gradient(from var(--cursor-angle) at center, black calc(var(--cone-spread) * 1%), transparent calc((var(--cone-spread) + 15) * 1%), transparent calc((100 - var(--cone-spread) - 15) * 1%), black calc((100 - var(--cone-spread)) * 1%));
+    }
+    .glow > .g-border > i {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.5px;
+      background: var(--g-mesh);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+              mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    }
+
+    /* riempimento colorato vicino ai bordi */
+    .glow > .g-fill {
+      background: var(--g-mesh);
+      -webkit-mask-image: linear-gradient(to bottom, black, black), radial-gradient(ellipse at 50% 50%, black 40%, transparent 65%), radial-gradient(ellipse at 66% 66%, black 5%, transparent 40%), radial-gradient(ellipse at 33% 33%, black 5%, transparent 40%), radial-gradient(ellipse at 66% 33%, black 5%, transparent 40%), radial-gradient(ellipse at 33% 66%, black 5%, transparent 40%), conic-gradient(from var(--cursor-angle) at center, transparent 5%, black 15%, black 85%, transparent 95%);
+              mask-image: linear-gradient(to bottom, black, black), radial-gradient(ellipse at 50% 50%, black 40%, transparent 65%), radial-gradient(ellipse at 66% 66%, black 5%, transparent 40%), radial-gradient(ellipse at 33% 33%, black 5%, transparent 40%), radial-gradient(ellipse at 66% 33%, black 5%, transparent 40%), radial-gradient(ellipse at 33% 66%, black 5%, transparent 40%), conic-gradient(from var(--cursor-angle) at center, transparent 5%, black 15%, black 85%, transparent 95%);
+      -webkit-mask-composite: source-out, source-over, source-over, source-over, source-over, source-over;
+              mask-composite: subtract, add, add, add, add, add;
+      opacity: calc(var(--fill-opacity, 0.5) * (var(--edge-proximity) - var(--color-sensitivity)) / (100 - var(--color-sensitivity)));
+      mix-blend-mode: soft-light;
+    }
+
+    /* alone esterno */
+    .glow > .g-edge {
+      inset: calc(var(--glow-padding) * -1);
+      z-index: 4;
+      -webkit-mask-image: conic-gradient(from var(--cursor-angle) at center, black 2.5%, transparent 10%, transparent 90%, black 97.5%);
+              mask-image: conic-gradient(from var(--cursor-angle) at center, black 2.5%, transparent 10%, transparent 90%, black 97.5%);
+      opacity: calc((var(--edge-proximity) - var(--edge-sensitivity)) / (100 - var(--edge-sensitivity)));
+      mix-blend-mode: plus-lighter;
+    }
+    .glow > .g-edge::before {
+      content: "";
+      position: absolute;
+      inset: var(--glow-padding);
+      border-radius: var(--glow-radius, 12px);
+      box-shadow:
+        inset 0 0 0 1px var(--glow-color),
+        inset 0 0 1px 0 var(--glow-color-60),
+        inset 0 0 3px 0 var(--glow-color-50),
+        inset 0 0 6px 0 var(--glow-color-40),
+        inset 0 0 15px 0 var(--glow-color-30),
+        inset 0 0 25px 2px var(--glow-color-20),
+        inset 0 0 50px 2px var(--glow-color-10),
+        0 0 1px 0 var(--glow-color-60),
+        0 0 3px 0 var(--glow-color-50),
+        0 0 6px 0 var(--glow-color-40),
+        0 0 15px 0 var(--glow-color-30),
+        0 0 25px 2px var(--glow-color-20),
+        0 0 50px 2px var(--glow-color-10);
+    }
+    /* spazio in alto e in basso nei caroselli, così l'alone non viene tagliato */
+    .rail { padding-top: 28px; padding-bottom: 28px; margin-top: -28px; margin-bottom: -28px; }
+    .content { overflow-x: clip; }
+
     .foot {
       padding: 24px var(--gutter) 0;
       border-top: 1px solid var(--line);
@@ -1691,6 +1779,17 @@ void main() {
        image: 'images/nomefile.jpg'. Vuoto = segnaposto "YZK".
      DATE: sempre nel formato 'AAAA-MM-GG' (es. '2026-12-05').
      ===================================================================== */
+  /* BORDER GLOW (luce sui bordi dei riquadri)
+     on: true/false · colors: i 3 colori del bordo · glow: colore dell'alone
+     in formato "tonalità saturazione luminosità" (HSL) */
+  const GLOW = {
+    on: true,
+    colors: ['#1e3fd8', '#38bdf8', '#a5d8ff'],
+    glow: '199 89 70',
+    intensity: 1,
+    fillOpacity: 0.5,
+  };
+
   /* ANTEPRIMA
      true  = si vedono TUTTI i capitoli: quelli vuoti mostrano un riquadro
              d'esempio con l'etichetta "ESEMPIO" (per lavorare al design).
@@ -1987,6 +2086,98 @@ void main() {
     wrap.append(sec);
   });
   if (!bar.children.length) bar.hidden = true;
+
+  /* --- Border Glow su tutti i riquadri --- */
+  (function () {
+    if (!GLOW.on) return;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+    // variabili colore (come buildGlowVars / buildGradientVars di React Bits)
+    const m = /([\d.]+)\s*([\d.]+)%?\s*([\d.]+)%?/.exec(GLOW.glow) || [0, 199, 89, 70];
+    const base = `${m[1]}deg ${m[2]}% ${m[3]}%`;
+    const vars = {};
+    [[100, ''], [60, '-60'], [50, '-50'], [40, '-40'], [30, '-30'], [20, '-20'], [10, '-10']].forEach(([o, k]) => {
+      vars['--glow-color' + k] = `hsl(${base} / ${Math.min(o * GLOW.intensity, 100)}%)`;
+    });
+    const POS = ['80% 55%', '69% 34%', '8% 6%', '41% 38%', '86% 85%', '82% 18%', '51% 4%'];
+    const MAP = [0, 1, 2, 0, 1, 2, 1];
+    const c = GLOW.colors;
+    vars['--g-mesh'] = POS.map((p, i) => `radial-gradient(at ${p}, ${c[Math.min(MAP[i], c.length - 1)]} 0px, transparent 50%)`).join(', ')
+      + `, linear-gradient(${c[0]} 0 100%)`;
+    vars['--fill-opacity'] = GLOW.fillOpacity;
+
+    const ease = { out: x => 1 - Math.pow(1 - x, 3), in: x => x * x * x };
+    const animate = ({ start = 0, end = 100, duration = 1000, delay = 0, fn = ease.out, onUpdate, onEnd }) => {
+      let frame = 0, t0 = 0;
+      const tick = now => {
+        if (!t0) t0 = now;
+        const t = Math.min((now - t0) / duration, 1);
+        onUpdate(start + (end - start) * fn(t));
+        if (t < 1) frame = requestAnimationFrame(tick); else if (onEnd) onEnd();
+      };
+      const timer = setTimeout(() => { frame = requestAnimationFrame(tick); }, delay);
+      return () => { clearTimeout(timer); cancelAnimationFrame(frame); };
+    };
+
+    // giro di luce automatico (animated={true} di React Bits)
+    const sweep = card => {
+      if (reduce || card._sweeping) return;
+      card._sweeping = true;
+      const a0 = 110, a1 = 465;
+      card.classList.add('sweep-active');
+      card.style.setProperty('--cursor-angle', a0 + 'deg');
+      const setA = v => card.style.setProperty('--cursor-angle', `${(a1 - a0) * (v / 100) + a0}deg`);
+      animate({ duration: 500, onUpdate: v => card.style.setProperty('--edge-proximity', v) });
+      animate({ fn: ease.in, duration: 1500, end: 50, onUpdate: setA });
+      animate({ fn: ease.out, delay: 1500, duration: 2250, start: 50, end: 100, onUpdate: setA });
+      animate({ fn: ease.in, delay: 2500, duration: 1500, start: 100, end: 0,
+        onUpdate: v => card.style.setProperty('--edge-proximity', v),
+        onEnd: () => { card.classList.remove('sweep-active'); card._sweeping = false; } });
+    };
+
+    const wrap = el => {
+      const g = document.createElement('div');
+      g.className = 'glow';
+      g.style.setProperty('--glow-radius', getComputedStyle(el).borderTopLeftRadius || '12px');
+      for (const [k, v] of Object.entries(vars)) g.style.setProperty(k, v);
+      el.replaceWith(g);
+      g.append(el);
+      const border = document.createElement('span'); border.className = 'g-layer g-border'; border.append(document.createElement('i'));
+      const fill = document.createElement('span'); fill.className = 'g-layer g-fill';
+      const edge = document.createElement('span'); edge.className = 'g-layer g-edge';
+      g.append(border, fill, edge);
+
+      if (canHover) {
+        g.addEventListener('pointerenter', () => g.classList.add('g-hover'));
+        g.addEventListener('pointerleave', () => g.classList.remove('g-hover'));
+        g.addEventListener('pointermove', e => {
+          const r = g.getBoundingClientRect();
+          const x = e.clientX - r.left, y = e.clientY - r.top;
+          const cx = r.width / 2, cy = r.height / 2, dx = x - cx, dy = y - cy;
+          const kx = dx ? cx / Math.abs(dx) : Infinity, ky = dy ? cy / Math.abs(dy) : Infinity;
+          const edgeP = Math.min(Math.max(1 / Math.min(kx, ky), 0), 1);
+          let deg = (dx || dy) ? Math.atan2(dy, dx) * 180 / Math.PI + 90 : 0;
+          if (deg < 0) deg += 360;
+          g.style.setProperty('--edge-proximity', (edgeP * 100).toFixed(3));
+          g.style.setProperty('--cursor-angle', deg.toFixed(3) + 'deg');
+        });
+      } else {
+        g.addEventListener('touchstart', () => sweep(g), { passive: true });
+      }
+      return g;
+    };
+
+    const targets = [...document.querySelectorAll('#sections .feature, #sections .card, #sections .product .thumb, #sections .video > .frame')];
+    const glows = targets.map(wrap);
+
+    // Su telefono: giro di luce la prima volta che il riquadro entra nello schermo
+    if (!canHover && !reduce) {
+      const io = new IntersectionObserver(entries => entries.forEach(e => {
+        if (e.isIntersecting) { sweep(e.target); io.unobserve(e.target); }
+      }), { threshold: 0.6 });
+      glows.forEach(g => io.observe(g));
+    }
+  })();
 
   /* --- Barra dei capitoli: evidenzia quello che stai guardando --- */
   const chips = [...bar.querySelectorAll('.chapter')];
