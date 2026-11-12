@@ -364,6 +364,41 @@
     .product .t { margin-top: 10px; font-size: 0.85rem; font-weight: 600; line-height: 1.3; }
     .product .s { margin-top: 4px; font-size: 0.72rem; color: var(--mute); letter-spacing: 0.06em; text-transform: uppercase; }
 
+    /* --- Riquadro grande (Pre-Save) --- */
+    .features { display: flex; flex-direction: column; gap: 12px; }
+    .feature {
+      display: block;
+      background: var(--card);
+      border-radius: 14px;
+      overflow: hidden;
+      color: inherit;
+      text-decoration: none;
+      text-align: left;
+      transition: background-color .2s ease, transform .2s ease;
+    }
+    a.feature:hover, a.feature:focus-visible { background: var(--card-hover); outline: none; }
+    a.feature:active { transform: scale(0.99); }
+    .feature .thumb.art { aspect-ratio: 1; width: 100%; }
+    .feature .thumb.art span { font-size: 1.6rem; }
+    .feature .body { display: flex; flex-direction: column; gap: 6px; padding: 16px 16px 4px; }
+    .feature .t { font-size: 1.05rem; line-height: 1.3; }
+    .feature .s { font-size: 0.72rem; color: var(--mute); letter-spacing: 0.06em; text-transform: uppercase; }
+    .feature .cta {
+      display: flex; align-items: center; justify-content: center;
+      margin: 14px 16px 16px;
+      min-height: 48px;
+      border-radius: 10px;
+      background: var(--text);
+      color: #000;
+      font-size: 0.85rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .feature .t, .feature .s, .feature .cta { font-family: var(--font-cards); font-weight: 700; }
+
+    /* Pulsante a destra nelle card (es. "Tickets") */
+    .card .go { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
+
     .foot {
       padding: 24px var(--gutter) 0;
       border-top: 1px solid var(--line);
@@ -1597,13 +1632,27 @@ void main() {
        url:  l'indirizzo. Vuoto ('') = icona spenta e non cliccabile.
              Per l'email: 'mailto:tuo@indirizzo.com'
 
-     CAPITOLI (le sezioni sotto; l'ordine qui è l'ordine sulla pagina)
-       Ogni capitolo appare anche nella barra in alto.
-       type: 'cards'    → card con immagine a sinistra (come Listen Now)
-             'videos'   → video YouTube in fila orizzontale
-             'products' → riquadri quadrati in fila (merch, store)
-       Per le immagini: metti i file nella cartella "images" e scrivi
-       image: 'images/nomefile.jpg'. Vuoto = segnaposto con "YZK".
+     CAPITOLI
+       • L'ORDINE della lista CHAPTERS è l'ordine sulla pagina e nella barra
+         in alto: per spostare un capitolo sposta il suo blocco { … }.
+       • title: il nome che vedi (puoi cambiarlo come vuoi).
+       • show: true = acceso, false = spento (nascosto da pagina e barra).
+       • Un capitolo VUOTO si nasconde da solo (es. nessun pre-save,
+         nessuno show in programma).
+       • Per aggiungere un capitolo copia un blocco esistente, dagli un
+         id nuovo (senza spazi) e cambia title.
+
+       type: 'feature'  → riquadro grande con artwork (Pre-Save)
+             'latest'   → carosello quadrato delle ultime uscite (da RELEASES)
+             'releases' → tutte le uscite, dalla più nuova alla più vecchia
+             'shows'    → date dei tuoi eventi (quelle passate spariscono da sole)
+             'videos'   → video YouTube
+             'products' → riquadri quadrati in fila (store)
+             'cards'    → card semplici con immagine a sinistra
+
+     IMMAGINI: metti i file nella cartella "images" e scrivi
+       image: 'images/nomefile.jpg'. Vuoto = segnaposto "YZK".
+     DATE: sempre nel formato 'AAAA-MM-GG' (es. '2026-12-05').
      ===================================================================== */
   const SOCIALS = [
     { icon: 'instagram',  url: 'https://www.instagram.com/iamyeezik/' },
@@ -1615,15 +1664,42 @@ void main() {
     { icon: 'beatport',   url: '' },
   ];
 
+  /* LE TUE USCITE — una riga per canzone, in qualsiasi ordine:
+     il sito le mette da solo dalla più nuova alla più vecchia.
+     Le usano sia "Listen Now" (le ultime) sia "Releases" (tutte).
+     kind: 'Single', 'EP', 'Album', 'Remix'…   url: link della canzone
+     (es. Spotify o un link unico tipo Linkfire/ToneDen).
+     Una canzone senza data appare come "Coming soon". */
+  const RELEASES = [
+    { title: 'Primo singolo', kind: 'Single', date: '', image: '', url: '' },
+  ];
+
   const CHAPTERS = [
     {
-      id: 'listen', title: 'Listen Now', type: 'cards',
-      items: [
-        { title: 'Primo singolo — in arrivo', subtitle: 'Pre-save presto', image: '', url: '' },
-      ],
+      id: 'presave', title: 'Pre-Save', type: 'feature', show: true,
+      /* Quando hai un pre-save, riempi questo riquadro.
+         Lascia items: [] e il capitolo resta nascosto. Esempio:
+         { title: 'Nome canzone', date: '2026-12-05', image: 'images/cover.jpg',
+           url: 'https://link-del-presave', button: 'Pre-save' } */
+      items: [],
     },
     {
-      id: 'youtube', title: 'YouTube Videos', type: 'videos',
+      id: 'listen', title: 'Listen Now', type: 'latest', show: true,
+      limit: 6, // quante uscite mostrare nel carosello
+    },
+    {
+      id: 'shows', title: 'Upcoming Shows', type: 'shows', show: true,
+      /* Una riga per evento. Le date passate spariscono da sole; senza
+         eventi il capitolo resta nascosto. Esempio:
+         { title: 'Nome locale', city: 'Milano', date: '2026-12-20',
+           image: 'images/flyer.jpg', url: 'https://link-biglietti' } */
+      items: [],
+    },
+    {
+      id: 'releases', title: 'Releases', type: 'releases', show: true,
+    },
+    {
+      id: 'youtube', title: 'YouTube', type: 'videos', show: true,
       /* Due modi per mettere i video:
          1) channel: l'ID del canale (inizia con "UC…") → un player che
             mostra da solo gli ULTIMI video caricati, senza toccare nulla.
@@ -1636,13 +1712,7 @@ void main() {
       ],
     },
     {
-      id: 'events', title: 'Events', type: 'cards',
-      items: [
-        { title: 'Prossime date in arrivo', subtitle: 'Stay close', image: '', url: '' },
-      ],
-    },
-    {
-      id: 'merch', title: 'Merch', type: 'products',
+      id: 'store', title: 'Store', type: 'products', show: true,
       items: [
         { title: 'Coming soon', subtitle: '—', image: '', url: '' },
         { title: 'Coming soon', subtitle: '—', image: '', url: '' },
@@ -1731,14 +1801,83 @@ void main() {
     return box;
   };
 
-  CHAPTERS.forEach(ch => {
-    const chip = h('a', 'chapter', { href: '#' + ch.id, text: ch.title });
-    bar.append(chip);
+  /* --- Date --- */
+  const MONTHS = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+  const parseDate = d => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ''); return m ? new Date(+m[1], m[2] - 1, +m[3]) : null; };
+  const fmtDate = d => { const x = parseDate(d); return x ? `${x.getDate()} ${MONTHS[x.getMonth()]} ${x.getFullYear()}` : ''; };
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  // Uscite ordinate: prima quelle senza data ("Coming soon"), poi dalla più nuova
+  const releasesSorted = RELEASES.slice().sort((a, b) => {
+    const da = parseDate(a.date), db = parseDate(b.date);
+    if (!da && !db) return 0; if (!da) return -1; if (!db) return 1;
+    return db - da;
+  });
+  const releaseSub = r => [r.kind, r.date ? fmtDate(r.date) : 'Coming soon'].filter(Boolean).join(' · ');
 
-    const sec = h('section', 'section', { id: ch.id });
-    sec.append(h('h2', '', { text: ch.title }));
+  const cardEl = (it, sub) => {
+    const c = linkOrBox(it.url, 'card');
+    c.append(thumb(it.image));
+    const body = h('div', 'body');
+    body.append(h('span', 't', { text: it.title || '' }));
+    if (sub) body.append(h('span', 's', { text: sub }));
+    c.append(body);
+    if (it.url) c.append(h('span', 'go', { text: it.button || '↗', 'aria-hidden': 'true' }));
+    return c;
+  };
+  const squareEl = (it, sub) => {
+    const p = linkOrBox(it.url, 'product');
+    p.append(thumb(it.image));
+    p.append(h('div', 't', { text: it.title || '' }));
+    if (sub) p.append(h('div', 's', { text: sub }));
+    return p;
+  };
 
-    if (ch.type === 'videos') {
+  // Ogni tipo di capitolo: cosa mostra e quando è "vuoto"
+  const BUILDERS = {
+    feature(ch) {
+      const items = ch.items || [];
+      if (!items.length) return null;
+      const list = h('div', 'features');
+      items.forEach(it => {
+        const f = linkOrBox(it.url, 'feature');
+        f.append(thumb(it.image, 'thumb art'));
+        const body = h('div', 'body');
+        body.append(h('span', 't', { text: it.title || '' }));
+        const when = parseDate(it.date);
+        if (when) body.append(h('span', 's', { text: (when > today ? 'Out ' : '') + fmtDate(it.date) }));
+        f.append(body);
+        if (it.url) f.append(h('span', 'cta', { text: (it.button || 'Pre-save') + ' ↗' }));
+        list.append(f);
+      });
+      return list;
+    },
+    latest(ch) {
+      const items = releasesSorted.slice(0, ch.limit || 6);
+      if (!items.length) return null;
+      const rail = h('div', 'rail');
+      items.forEach(r => rail.append(squareEl(r, releaseSub(r))));
+      return rail;
+    },
+    releases() {
+      if (!releasesSorted.length) return null;
+      const list = h('div', 'cards');
+      releasesSorted.forEach(r => list.append(cardEl(r, releaseSub(r))));
+      return list;
+    },
+    shows(ch) {
+      const items = (ch.items || [])
+        .filter(it => { const d = parseDate(it.date); return !d || d >= today; })
+        .sort((a, b) => (parseDate(a.date) || 0) - (parseDate(b.date) || 0));
+      if (!items.length) return null;
+      const list = h('div', 'cards');
+      items.forEach(it => {
+        const sub = [fmtDate(it.date), it.city].filter(Boolean).join(' · ');
+        list.append(cardEl({ ...it, button: it.url ? (it.button || 'Tickets ↗') : '' }, sub));
+      });
+      return list;
+    },
+    videos(ch) {
+      const frag = document.createDocumentFragment();
       if (ch.channel) {
         // Player con gli ultimi video del canale (playlist "uploads")
         const box = h('div', 'video only');
@@ -1749,41 +1888,46 @@ void main() {
           allow: 'encrypted-media; picture-in-picture; fullscreen', allowfullscreen: ''
         }));
         box.append(f);
-        sec.append(box);
+        frag.append(box);
       }
       const vids = (ch.videos || []).filter(v => v.id || !ch.channel);
       if (vids.length) {
         const rail = h('div', 'rail');
         if (ch.channel) rail.style.marginTop = '12px';
         vids.forEach(v => rail.append(videoCard(v, vids.length === 1)));
-        sec.append(rail);
+        frag.append(rail);
       }
-    } else if (ch.type === 'products') {
+      return frag.childNodes.length ? frag : null;
+    },
+    products(ch) {
+      const items = ch.items || [];
+      if (!items.length) return null;
       const rail = h('div', 'rail');
-      (ch.items || []).forEach(it => {
-        const p = linkOrBox(it.url, 'product');
-        p.append(thumb(it.image));
-        p.append(h('div', 't', { text: it.title || '' }));
-        if (it.subtitle) p.append(h('div', 's', { text: it.subtitle }));
-        rail.append(p);
-      });
-      sec.append(rail);
-    } else {
+      items.forEach(it => rail.append(squareEl(it, it.subtitle)));
+      return rail;
+    },
+    cards(ch) {
+      const items = ch.items || [];
+      if (!items.length) return null;
       const list = h('div', 'cards');
-      (ch.items || []).forEach(it => {
-        const c = linkOrBox(it.url, 'card');
-        c.append(thumb(it.image));
-        const body = h('div', 'body');
-        body.append(h('span', 't', { text: it.title || '' }));
-        if (it.subtitle) body.append(h('span', 's', { text: it.subtitle }));
-        c.append(body);
-        if (it.url) c.append(h('span', 'go', { text: '↗', 'aria-hidden': 'true' }));
-        list.append(c);
-      });
-      sec.append(list);
-    }
+      items.forEach(it => list.append(cardEl(it, it.subtitle)));
+      return list;
+    },
+  };
+
+  CHAPTERS.forEach(ch => {
+    if (ch.show === false) return;                       // spento a mano
+    const build = BUILDERS[ch.type] || BUILDERS.cards;
+    const content = build(ch);
+    if (!content) return;                                // vuoto → nascosto
+
+    bar.append(h('a', 'chapter', { href: '#' + ch.id, text: ch.title }));
+    const sec = h('section', 'section', { id: ch.id });
+    sec.append(h('h2', '', { text: ch.title }));
+    sec.append(content);
     wrap.append(sec);
   });
+  if (!bar.children.length) bar.hidden = true;
 
   /* --- Barra dei capitoli: evidenzia quello che stai guardando --- */
   const chips = [...bar.querySelectorAll('.chapter')];
