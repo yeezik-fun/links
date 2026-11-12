@@ -454,7 +454,7 @@
     }
     /* =====================================================================
        SCHERMATA DI CARICAMENTO — LatticeLoader (React Bits) in JS/CSS puro
-       Schermo scuro → "Thinking" → dopo 1s "Done" → dopo 0,5s si apre a metà
+       Schermo scuro → "Syncing" → dopo 1s "Ready" → dopo 0,5s si apre a metà
        ===================================================================== */
     html.is-loading, html.is-loading body { overflow: hidden; }
     .loader {
@@ -539,10 +539,10 @@
         <span class="lattice-loader__layer lattice-loader__mark"></span>
       </span>
       <span class="lattice-loader__label" aria-hidden="true">
-        <span class="lattice-loader__text" data-active>Thinking</span>
-        <span class="lattice-loader__text">Done</span>
+        <span class="lattice-loader__text" data-active>Syncing</span>
+        <span class="lattice-loader__text">Ready</span>
       </span>
-      <span class="lattice-loader__sr">Thinking, in progress</span>
+      <span class="lattice-loader__sr">Syncing, in progress</span>
     </span>
   </div>
   <script>
@@ -551,8 +551,8 @@
      ===================================================================== */
   const LOADER = {
     on: true,          // false = niente schermata
-    working: 1000,     // ms di "Thinking" prima di "Done"
-    done: 500,         // ms di "Done" prima di aprirsi
+    working: 1000,     // ms di "Syncing" prima di "Ready"
+    done: 500,         // ms di "Ready" prima di aprirsi
     open: 750,         // ms dell'apertura a metà
     onlyFirst: true,   // true = solo alla PRIMA visita (le volte dopo il sito si apre subito)
                        // per rivederla: aggiungi ?loader all'indirizzo (es. …/links/?loader)
@@ -595,10 +595,10 @@
     const [tWork, tDone] = ll.querySelectorAll('.lattice-loader__text');
     const sr = ll.querySelector('.lattice-loader__sr');
 
-    setTimeout(() => {                         // → Done
+    setTimeout(() => {                         // → Ready
       ll.dataset.status = 'done';
       tWork.removeAttribute('data-active'); tDone.setAttribute('data-active', '');
-      sr.textContent = 'Done';
+      sr.textContent = 'Ready';
       setTimeout(() => {                       // → si apre a metà
         el.classList.add('open');
         root.classList.remove('is-loading');
