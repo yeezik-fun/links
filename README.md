@@ -1,27 +1,19 @@
 # links
 
-Pagina link di Yeezik (stile Linktree), con lo stesso sfondo GradientASCII e lo stesso titolo YEEZIK della Home di prova (`yeezik-fun/yeezikwebsitetest`).
+Pagina link di Yeezik (stile Linktree).
 
-## Modificare i link
-
-Apri `index.html` e cambia solo la lista `LINKS` (cerca "I TUOI LINK"):
-
-```js
-{ label: 'Spotify', url: 'https://open.spotify.com/artist/...' },
-```
-
-Un link con `url: ''` appare come **SOON** e non è cliccabile.
+Punto di partenza: copia identica della Home di `yeezik-fun/yeezikwebsitetest`
+(sfondo GradientASCII, titolo YEEZIK con effetto DecryptedText, font Moderniz).
+Da qui si costruisce la pagina link un pezzo alla volta.
 
 ## File
 
-- `index.html` — pagina, stile e lista dei link
-- `assets/gradient-ascii.js` — sfondo animato (React Bits, in JS puro)
-- `assets/decrypted-text.js` — effetto "decrypt" sul titolo e sui bottoni
+- `index.html` — pagina completa (stile e script dentro il file)
 - `fonts/Moderniz.woff` — font del titolo
 
 ## Pubblicare
 
 Sito statico, nessuna build.
 
-- **GitHub Pages**: Settings → Pages → Source "Deploy from a branch" → `main` / `(root)`. Indirizzo: `https://yeezik-fun.github.io/links/`
-- **Cloudflare Workers**: collega la repo, lascia vuoto il Build command, Deploy command `npx wrangler deploy` (usa `wrangler.jsonc`).
+- **GitHub Pages**: Settings → Pages → "Deploy from a branch" → `main` / `(root)` → `https://yeezik-fun.github.io/links/`
+- **Cloudflare Workers**: Build command vuoto, Deploy command `npx wrangler deploy` (usa `wrangler.jsonc`).
