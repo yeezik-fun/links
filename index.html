@@ -451,6 +451,66 @@
       color: var(--mute);
     }
 
+    /* =====================================================================
+       VERSIONE TABLET E PC — stessi contenuti, impaginati per schermi larghi
+       ===================================================================== */
+    @media (min-width: 768px) {
+      :root {
+        --gutter: 32px;
+        --tile: 176px;                           /* altezza unica dei riquadri */
+      }
+      .section { padding-top: 48px; padding-bottom: 48px; scroll-margin-top: 72px; }
+      .section h2 { font-size: 1.75rem; margin-bottom: 24px; }
+      .chapter { padding: 10px 16px; }
+      .chapter:hover { background: #171717; }
+      .chapter.active:hover { background: #222; }
+
+      .features, .cards { gap: 16px; }
+      .feature .t { font-size: 1.1rem; }
+      .feature .cta { margin: 12px 18px 18px; }
+      .feature .body { padding: 18px 18px 0; }
+
+      /* Caroselli → griglia: i quadrati e i video vanno a capo invece di scorrere */
+      .rail {
+        flex-wrap: wrap;
+        overflow: visible;
+        margin: 0;
+        padding: 0;
+        gap: 24px 16px;
+        scroll-snap-type: none;
+      }
+      .video, .video.only { width: calc(var(--tile) * 16 / 9); }
+
+      .product .t { font-size: 0.9rem; }
+      a.product .thumb { transition: transform .25s ease; }
+      a.product:hover .thumb { transform: translateY(-3px); }
+      .video button.frame img { transition: transform .4s ease; }
+      .video button.frame:hover img { transform: scale(1.04); }
+      .video button.frame .play { transition: transform .2s ease, background-color .2s ease; }
+      .video button.frame:hover .play { transform: translate(-50%, -50%) scale(1.08); background: rgba(10, 10, 10, 0.75); }
+
+      .socials { gap: 10px; margin-top: 32px; }
+      .social { width: 48px; height: 48px; }
+      .social svg { width: 26px; height: 26px; }
+      .scroll-cue { font-size: 0.7rem; }
+      .foot { padding-top: 32px; }
+    }
+
+    @media (min-width: 1024px) {
+      :root {
+        /* contenuti al centro, larghezza massima 1120px */
+        --gutter: max(40px, calc((100vw - 1120px) / 2));
+        --tile: 200px;
+      }
+      .section h2 { font-size: 2rem; }
+      /* Riquadri orizzontali e card: due per riga */
+      .features, .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    }
+
+    /* Cursore a manina solo dove si può cliccare */
+    a, button { cursor: pointer; }
+    .card.soon, .feature.soon, .product.soon { cursor: default; }
+
     @media (prefers-reduced-motion: reduce) {
       .scroll-cue { animation: none; }
       html { scroll-behavior: auto !important; }
