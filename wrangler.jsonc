@@ -1,0 +1,6 @@
+{
+  // Cloudflare Workers: pubblica i file statici della repo (senza build)
+  "name": "yeezik-links",
+  "compatibility_date": "2026-11-01",
+  "assets": { "directory": "./" }
+}

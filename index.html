@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Yeezik — Links</title>
+  <meta name="description" content="Yeezik — DJ & Music Producer. All links in one place." />
+  <meta name="theme-color" content="#000000" />
+  <meta property="og:title" content="Yeezik — Links" />
+  <meta property="og:description" content="DJ & Music Producer. All links in one place." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" href="fonts/Moderniz.woff" as="font" type="font/woff" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      min-height: 100%;
+      background: #000;
+      color: #f6f8ff;
+      font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== SFONDO GradientASCII (stesso della Home) ===== */
+    .gradient-ascii-container { position: relative; width: 100%; height: 100%; overflow: hidden; }
+    .gradient-ascii-canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+    #bg { position: fixed; inset: 0; z-index: 0; }
+
+    /* ===== FONT DEL TITOLO ===== */
+    @font-face {
+      font-family: "Moderniz";
+      src: url("fonts/Moderniz.woff") format("woff");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* ===== CONTENUTO ===== */
+    main {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      min-height: 100svh;
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: max(48px, env(safe-area-inset-top)) 16px max(32px, env(safe-area-inset-bottom));
+      pointer-events: none; /* il mouse "passa" allo sfondo… */
+    }
+    main a, main h1 { pointer-events: auto; } /* …tranne link e titolo */
+
+    h1 {
+      font-family: "Moderniz", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: clamp(2.6rem, 15vw, 4.6rem);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      line-height: 1;
+      cursor: default;
+    }
+
+    .tagline {
+      margin-top: 12px;
+      font-weight: 300;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
+
+    /* ===== LISTA LINK ===== */
+    .links {
+      list-style: none;
+      width: 100%;
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 56px;
+      padding: 0 18px;
+      border: 1px solid rgba(246, 248, 255, 0.18);
+      background: rgba(0, 0, 0, 0.55);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      color: inherit;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+    }
+    .link .num { opacity: 0.45; font-size: 0.7rem; min-width: 2.2em; text-align: left; }
+    .link .label { flex: 1; text-align: left; white-space: nowrap; }
+    .link .arrow { opacity: 0.7; }
+
+    a.link:hover, a.link:focus-visible {
+      background: #f6f8ff;
+      color: #000;
+      border-color: #f6f8ff;
+      outline: none;
+    }
+    a.link:hover .num, a.link:hover .arrow,
+    a.link:focus-visible .num, a.link:focus-visible .arrow { opacity: 1; }
+
+    /* Link senza indirizzo = "Soon" (non cliccabile) */
+    .link.soon { opacity: 0.45; border-style: dashed; }
+    .link.soon .arrow { font-size: 0.65rem; letter-spacing: 0.16em; }
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.5;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .link { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sfondo animato -->
+  <div id="bg"></div>
+
+  <main>
+    <h1 id="title">YEEZIK</h1>
+    <p class="tagline">DJ &amp; Music Producer</p>
+
+    <ul class="links" id="links"></ul>
+
+    <footer>&copy;2026 Yeezik</footer>
+  </main>
+
+  <script src="assets/gradient-ascii.js"></script>
+  <script src="assets/decrypted-text.js"></script>
+  <script>
+  /* =====================================================================
+     I TUOI LINK — modifica solo questa lista.
+     - label: il testo del bottone
+     - url:   l'indirizzo. Se lo lasci vuoto ('') il bottone appare
+              come "SOON" e non è cliccabile.
+     L'ordine qui è l'ordine sulla pagina.
+     ===================================================================== */
+  const LINKS = [
+    { label: 'Instagram',  url: 'https://www.instagram.com/iamyeezik/' },
+    { label: 'Spotify',    url: '' },
+    { label: 'SoundCloud', url: '' },
+    { label: 'TikTok',     url: '' },
+    { label: 'YouTube',    url: '' },
+    { label: 'Website',    url: 'https://yeezik.com' },
+  ];
+
+  /* ===== Costruzione dei bottoni (non serve toccare) ===== */
+  const list = document.getElementById('links');
+  LINKS.forEach((item, i) => {
+    const li = document.createElement('li');
+    const live = Boolean(item.url);
+    const el = document.createElement(live ? 'a' : 'div');
+    el.className = 'link' + (live ? '' : ' soon');
+    if (live) {
+      el.href = item.url;
+      el.target = '_blank';
+      el.rel = 'noopener';
+    } else {
+      el.setAttribute('aria-disabled', 'true');
+    }
+
+    const num = document.createElement('span');
+    num.className = 'num';
+    num.textContent = String(i + 1).padStart(3, '0');
+
+    const label = document.createElement('span');
+    label.className = 'label';
+
+    const arrow = document.createElement('span');
+    arrow.className = 'arrow';
+    arrow.setAttribute('aria-hidden', 'true');
+    arrow.textContent = live ? '↗' : 'SOON';
+
+    el.append(num, label, arrow);
+    li.append(el);
+    list.append(li);
+
+    // Effetto "decrypt" sul testo quando passi sul bottone
+    createDecryptedText(label, {
+      text: item.label.toUpperCase(),
+      animateOn: 'hover',
+      effect: 'scramble',
+      sequential: true,
+      revealDirection: 'start',
+      speed: 35,
+      maxIterations: 8,
+      characters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*+'
+    });
+    // Il passaggio sul bottone intero fa partire l'effetto, non solo sul testo
+    if (live) {
+      el.addEventListener('mouseenter', () => label.dispatchEvent(new MouseEvent('mouseenter')));
+      el.addEventListener('mouseleave', () => label.dispatchEvent(new MouseEvent('mouseleave')));
+    }
+  });
+
+  /* ===== SFONDO — stesse impostazioni della Home ===== */
+  createGradientASCII(document.getElementById('bg'), {
+    colors: ['#1e3fd8', '#f6f8ff', '#a5d8ff', '#38bdf8'],
+    shape: 'horizon',
+    characters: ' IYXK2Z0E@',
+    cellSize: 18,
+    density: 0.8,
+    glyphOpacity: 0.85,
+    glow: 0.2,
+    depthOfField: 0,
+    flicker: 0.2,
+    softness: 0.5,
+    scale: 1,
+    flow: 0.5,
+    speed: 1,
+    gradientOpacity: 0.9,
+    grain: 0.08,
+    variation: 0,
+    mouseInteraction: true,
+    scrambleRadius: 0.1,
+    clickEffect: 'wave',
+    intro: true,
+    lightMode: false
+  });
+
+  /* ===== TITOLO — stesse impostazioni della Home ===== */
+  const title = document.getElementById('title');
+  title.textContent = '';
+  createDecryptedText(title, {
+    text: 'YEEZIK',
+    animateOn: 'inViewHover',
+    effect: 'scramble',
+    sequential: true,
+    revealDirection: 'start',
+    speed: 60,
+    maxIterations: 10,
+    introHold: 800,
+    hoverRadius: 100,
+    scrambleColor: '#ffffff',
+    useOriginalCharsOnly: false,
+    characters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&*+',
+    className: 'revealed',
+    encryptedClassName: 'encrypted',
+    clickMode: 'once'
+  });
+  </script>
+</body>
+</html>
