@@ -330,7 +330,7 @@
     .video .frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
     .video button.frame { display: block; width: 100%; border: 0; padding: 0; cursor: pointer; color: inherit; font: inherit; }
     .video .frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .video .frame::after {         /* velo scuro sopra la copertina */
+    .video button.frame::after {   /* velo scuro sopra la copertina (solo prima di avviare il video) */
       content: "";
       position: absolute;
       inset: 0;
@@ -1817,10 +1817,12 @@ void main() {
     // Il video vero si carica solo quando lo tocchi: la pagina resta leggera
     btn.addEventListener('click', () => {
       const f = h('div', 'frame');
+      const origin = /^https?:/.test(location.protocol) ? '&origin=' + encodeURIComponent(location.origin) : '';
       f.append(h('iframe', '', {
-        src: `https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&playsinline=1&rel=0`,
+        src: `https://www.youtube.com/embed/${v.id}?autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1${origin}`,
         title: v.title || 'YouTube video',
-        allow: 'autoplay; encrypted-media; picture-in-picture; fullscreen',
+        allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen',
+        referrerpolicy: 'strict-origin-when-cross-origin',
         allowfullscreen: ''
       }));
       btn.replaceWith(f);
@@ -1918,9 +1920,10 @@ void main() {
         const box = h('div', 'video only');
         const f = h('div', 'frame');
         f.append(h('iframe', '', {
-          src: `https://www.youtube-nocookie.com/embed/videoseries?list=UU${ch.channel.replace(/^UC/, '')}&playsinline=1&rel=0`,
+          src: `https://www.youtube.com/embed/videoseries?list=UU${ch.channel.replace(/^UC/, '')}&playsinline=1&rel=0`,
           title: 'Ultimi video YouTube', loading: 'lazy',
-          allow: 'encrypted-media; picture-in-picture; fullscreen', allowfullscreen: ''
+          allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen',
+          referrerpolicy: 'strict-origin-when-cross-origin', allowfullscreen: ''
         }));
         box.append(f);
         frag.append(box);
@@ -1992,6 +1995,12 @@ void main() {
   // Linea sotto la barra quando resta attaccata in alto
   const sentinel = h('div'); bar.before(sentinel);
   new IntersectionObserver(([e]) => bar.classList.toggle('stuck', !e.isIntersecting)).observe(sentinel);
+
+  // Lo sfondo animato si ferma quando lo schermo iniziale non si vede più
+  // (la parte bassa lo copre): la pagina e i video restano fluidi.
+  const bgEl = document.getElementById('bg');
+  new IntersectionObserver(([e]) => { bgEl.style.display = e.isIntersecting ? '' : 'none'; })
+    .observe(document.querySelector('.hero'));
 
   // Scorrimento morbido verso i capitoli
   document.documentElement.style.scrollBehavior = 'smooth';
