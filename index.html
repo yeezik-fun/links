@@ -554,6 +554,8 @@
     working: 1000,     // ms di "Thinking" prima di "Done"
     done: 500,         // ms di "Done" prima di aprirsi
     open: 750,         // ms dell'apertura a metà
+    onlyFirst: true,   // true = solo alla PRIMA visita (le volte dopo il sito si apre subito)
+                       // per rivederla: aggiungi ?loader all'indirizzo (es. …/links/?loader)
   };
   // Il sito si apre SEMPRE dall'inizio: il browser non deve tornare dove eri
   // rimasto né saltare a un capitolo (#presave…) rimasto nell'indirizzo.
@@ -568,7 +570,13 @@
     let started = false;
     const finish = () => { if (started) return; started = true; window.dispatchEvent(new Event('loader:open')); };
     window.loaderOpened = () => started;
-    if (!LOADER.on) { el.classList.add('gone'); return; }
+    // Già vista su questo telefono/browser? Allora niente schermata.
+    const KEY = 'yeezik-loader-seen';
+    let seen = false;
+    try { seen = localStorage.getItem(KEY) === '1'; } catch (e) {}
+    const force = /[?&]loader\b/.test(location.search);
+    if (!LOADER.on || (LOADER.onlyFirst && seen && !force)) { el.classList.add('gone'); started = true; return; }
+    try { localStorage.setItem(KEY, '1'); } catch (e) {}
     root.classList.add('is-loading');
 
     // Pattern "ripple", griglia 3x3 (come React Bits): step 90 x scale 1.5
