@@ -364,7 +364,7 @@
     .product .t { margin-top: 10px; font-size: 0.85rem; font-weight: 600; line-height: 1.3; }
     .product .s { margin-top: 4px; font-size: 0.72rem; color: var(--mute); letter-spacing: 0.06em; text-transform: uppercase; }
 
-    /* --- Riquadro grande (Pre-Save) --- */
+    /* --- Riquadro grande (Pre-Save, Out Now) --- */
     .features { display: flex; flex-direction: column; gap: 12px; }
     .feature {
       display: block;
@@ -395,11 +395,6 @@
       text-transform: uppercase;
     }
     .feature .t, .feature .s, .feature .cta { font-family: var(--font-cards); font-weight: 700; }
-
-    /* Card alte (Releases): artwork quadrato grande come in Out Now */
-    .cards.tall .card { min-height: 0; }
-    .cards.tall .card .thumb { width: 42%; aspect-ratio: 1; }
-    .cards.tall .card .t { font-size: 1rem; }
 
     /* Pulsante a destra nelle card (es. "Tickets") */
     .card .go { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
@@ -1648,8 +1643,8 @@ void main() {
          id nuovo (senza spazi) e cambia title.
 
        type: 'feature'  → riquadro grande con artwork (Pre-Save)
-             'latest'   → carosello quadrato delle ultime uscite (da RELEASES)
-             'releases' → tutte le uscite, dalla più nuova alla più vecchia
+             'latest'   → riquadro grande con l'ultima uscita (da RELEASES)
+             'releases' → quadrati in fila con tutte le uscite, dalla più nuova
              'shows'    → date dei tuoi eventi (quelle passate spariscono da sole)
              'videos'   → video YouTube
              'products' → riquadri quadrati in fila (store)
@@ -1671,7 +1666,7 @@ void main() {
 
   /* LE TUE USCITE — una riga per canzone, in qualsiasi ordine:
      il sito le mette da solo dalla più nuova alla più vecchia.
-     Le usano sia "Out Now" (le ultime) sia "Releases" (tutte).
+     Le usano sia "Out Now" (l'ultima) sia "Releases" (tutte).
      kind: 'Single', 'EP', 'Album', 'Remix'…   url: link della canzone
      (es. Spotify o un link unico tipo Linkfire/ToneDen).
      Una canzone senza data appare come "Coming soon". */
@@ -1690,7 +1685,9 @@ void main() {
     },
     {
       id: 'outnow', title: 'Out Now', type: 'latest', show: true,
-      limit: 6, // quante uscite mostrare nel carosello
+      // Riquadro grande con la tua ULTIMA uscita già pubblicata (da RELEASES).
+      // Le canzoni senza data o con data futura non compaiono qui.
+      button: 'Listen', // testo del bottone
     },
     {
       id: 'shows', title: 'Upcoming Shows', type: 'shows', show: true,
@@ -1837,37 +1834,40 @@ void main() {
     return p;
   };
 
+  // Riquadro grande: artwork quadrato, titolo, data, bottone bianco
+  const featureEl = (it, sub, button) => {
+    const f = linkOrBox(it.url, 'feature');
+    f.append(thumb(it.image, 'thumb art'));
+    const body = h('div', 'body');
+    body.append(h('span', 't', { text: it.title || '' }));
+    if (sub) body.append(h('span', 's', { text: sub }));
+    f.append(body);
+    if (it.url) f.append(h('span', 'cta', { text: button + ' ↗' }));
+    return f;
+  };
+
   // Ogni tipo di capitolo: cosa mostra e quando è "vuoto"
   const BUILDERS = {
     feature(ch) {
       const items = ch.items || [];
       if (!items.length) return null;
       const list = h('div', 'features');
-      items.forEach(it => {
-        const f = linkOrBox(it.url, 'feature');
-        f.append(thumb(it.image, 'thumb art'));
-        const body = h('div', 'body');
-        body.append(h('span', 't', { text: it.title || '' }));
-        const when = parseDate(it.date);
-        if (when) body.append(h('span', 's', { text: (when > today ? 'Out ' : '') + fmtDate(it.date) }));
-        f.append(body);
-        if (it.url) f.append(h('span', 'cta', { text: (it.button || 'Pre-save') + ' ↗' }));
-        list.append(f);
-      });
+      items.forEach(it => list.append(featureEl(it, (parseDate(it.date) > today ? 'Out ' : '') + fmtDate(it.date), it.button || 'Pre-save')));
       return list;
     },
     latest(ch) {
-      const items = releasesSorted.slice(0, ch.limit || 6);
-      if (!items.length) return null;
-      const rail = h('div', 'rail');
-      items.forEach(r => rail.append(squareEl(r, releaseSub(r))));
-      return rail;
+      // Ultima uscita già pubblicata (data di oggi o passata)
+      const r = releasesSorted.find(x => { const d = parseDate(x.date); return d && d <= today; });
+      if (!r) return null;
+      const list = h('div', 'features');
+      list.append(featureEl(r, releaseSub(r), r.button || ch.button || 'Listen'));
+      return list;
     },
     releases() {
       if (!releasesSorted.length) return null;
-      const list = h('div', 'cards tall');
-      releasesSorted.forEach(r => list.append(cardEl(r, releaseSub(r))));
-      return list;
+      const rail = h('div', 'rail');
+      releasesSorted.forEach(r => rail.append(squareEl(r, releaseSub(r))));
+      return rail;
     },
     shows(ch) {
       const items = (ch.items || [])
