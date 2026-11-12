@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Yeezik — DJ & Music Producer. Musica, video, eventi e social." />
+  <meta name="description" content="Yeezik — DJ & Music Producer. Music, videos, shows and socials." />
   <title>Yeezik — Links</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -358,7 +358,7 @@
       text-align: left;
       line-height: 1.35;
     }
-    /* Riga "Guarda su YouTube" sotto ogni video */
+    /* Riga "Watch on YouTube" sotto ogni video */
     .video .yt-link {
       display: block;
       width: fit-content;
@@ -423,7 +423,7 @@
     }
     .feature .t, .feature .s, .feature .cta { font-family: var(--font-cards); font-weight: 700; }
 
-    /* Etichetta "ESEMPIO" sui riquadri finti dell'anteprima */
+    /* Etichetta "EXAMPLE" sui riquadri finti dell'anteprima */
     .thumb span.demo-tag, .thumb.ph span.demo-tag {
       position: absolute; top: 8px; left: 8px; z-index: 1;
       opacity: 1; line-height: 1;
@@ -624,7 +624,7 @@
 
   <!-- Parte bassa: barra dei capitoli + sezioni (si riempiono da CONTENUTI) -->
   <main class="content" id="content">
-    <nav class="chapters" id="chapters" aria-label="Capitoli"></nav>
+    <nav class="chapters" id="chapters" aria-label="Sections"></nav>
     <div id="sections"></div>
     <footer class="foot">&copy;2026 Yeezik</footer>
   </main>
@@ -1855,7 +1855,7 @@ void main() {
      ===================================================================== */
   /* ANTEPRIMA
      true  = si vedono TUTTI i capitoli: quelli vuoti mostrano un riquadro
-             d'esempio con l'etichetta "ESEMPIO" (per lavorare al design).
+             d'esempio con l'etichetta "EXAMPLE" (per lavorare al design).
      false = sito vero: i capitoli vuoti si nascondono da soli. */
   const PREVIEW = true;
 
@@ -1915,8 +1915,8 @@ void main() {
             dopo "v=" nel link (youtube.com/watch?v=QUESTO). */
       channel: '',
       videos: [
-        { id: '', title: 'Video in arrivo' },
-        { id: '', title: 'Video in arrivo' },
+        { id: '', title: 'Video coming soon' },
+        { id: '', title: 'Video coming soon' },
       ],
     },
     {
@@ -1955,7 +1955,7 @@ void main() {
   };
   const LABELS = { instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube', spotify: 'Spotify',
     applemusic: 'Apple Music', soundcloud: 'SoundCloud', beatport: 'Beatport', facebook: 'Facebook',
-    website: 'Sito web', x: 'X', threads: 'Threads', twitch: 'Twitch', mixcloud: 'Mixcloud', bandcamp: 'Bandcamp', email: 'Email' };
+    website: 'Website', x: 'X', threads: 'Threads', twitch: 'Twitch', mixcloud: 'Mixcloud', bandcamp: 'Bandcamp', email: 'Email' };
   const linkOrBox = (url, cls) => {
     const el = h(url ? 'a' : 'div', cls + (url ? '' : ' soon'));
     if (url) {
@@ -1989,10 +1989,10 @@ void main() {
   const videoCard = (v, only) => {
     const box = h('div', 'video' + (only ? ' only' : ''));
     if (!v.id) {
-      box.append(h('div', 'frame ph', { text: v.title || 'Video in arrivo' }));
+      box.append(h('div', 'frame ph', { text: v.title || 'Video coming soon' }));
       return box;
     }
-    const btn = h('button', 'frame', { type: 'button', 'aria-label': 'Guarda ' + (v.title || 'il video') });
+    const btn = h('button', 'frame', { type: 'button', 'aria-label': 'Play ' + (v.title || 'video') });
     btn.append(h('img', '', { src: `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`, alt: '', loading: 'lazy' }));
     if (v.title) btn.append(h('span', 'vt', { text: v.title }));
     const play = h('span', 'play'); play.innerHTML = PLAY; btn.append(play);
@@ -2011,13 +2011,13 @@ void main() {
     });
     box.append(btn);
     // Rimando al video su YouTube (su iPhone apre l'app se è installata)
-    const out = h('a', 'yt-link', { href: `https://www.youtube.com/watch?v=${v.id}`, target: '_blank', rel: 'noopener', text: 'Guarda su YouTube \u2197' });
+    const out = h('a', 'yt-link', { href: `https://www.youtube.com/watch?v=${v.id}`, target: '_blank', rel: 'noopener', text: 'Watch on YouTube \u2197' });
     box.append(out);
     return box;
   };
 
   /* --- Date --- */
-  const MONTHS = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const parseDate = d => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ''); return m ? new Date(+m[1], m[2] - 1, +m[3]) : null; };
   const fmtDate = d => { const x = parseDate(d); return x ? `${x.getDate()} ${MONTHS[x.getMonth()]} ${x.getFullYear()}` : ''; };
   const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -2048,7 +2048,7 @@ void main() {
   };
 
   // Riquadro grande: artwork quadrato, titolo, data, bottone bianco
-  const demoTag = (el, it) => { if (it.demo) el.append(h('span', 'demo-tag', { text: 'Esempio' })); return el; };
+  const demoTag = (el, it) => { if (it.demo) el.append(h('span', 'demo-tag', { text: 'Example' })); return el; };
   const featureEl = (it, sub, button) => {
     const f = linkOrBox(it.url, 'feature');
     f.append(demoTag(thumb(it.image, 'thumb art'), it));
@@ -2064,7 +2064,7 @@ void main() {
   const BUILDERS = {
     feature(ch) {
       let items = ch.items || [];
-      if (!items.length && PREVIEW) items = [{ title: 'Nome canzone', date: '', image: '', url: '#', button: 'Pre-save', demo: true, sub: 'Out · data di uscita' }];
+      if (!items.length && PREVIEW) items = [{ title: 'Song title', date: '', image: '', url: '#', button: 'Pre-save', demo: true, sub: 'Out · release date' }];
       if (!items.length) return null;
       const list = h('div', 'features');
       items.forEach(it => list.append(featureEl(it, it.sub || (parseDate(it.date) > today ? 'Out ' : '') + fmtDate(it.date), it.button || 'Pre-save')));
@@ -2073,7 +2073,7 @@ void main() {
     latest(ch) {
       // Ultima uscita già pubblicata (data di oggi o passata)
       let r = releasesSorted.find(x => { const d = parseDate(x.date); return d && d <= today; });
-      if (!r && PREVIEW) r = { ...(releasesSorted[0] || { title: 'Nome canzone', kind: 'Single' }), url: '#', demo: true };
+      if (!r && PREVIEW) r = { ...(releasesSorted[0] || { title: 'Song title', kind: 'Single' }), url: '#', demo: true };
       if (!r) return null;
       const list = h('div', 'features');
       list.append(featureEl(r, releaseSub(r), r.button || ch.button || 'Listen'));
@@ -2089,7 +2089,7 @@ void main() {
       let items = (ch.items || [])
         .filter(it => { const d = parseDate(it.date); return !d || d >= today; })
         .sort((a, b) => (parseDate(a.date) || 0) - (parseDate(b.date) || 0));
-      if (!items.length && PREVIEW) items = [{ title: 'Nome evento / locale', city: 'Città', date: '', image: '', url: '#', demo: true, sub: 'Data · Città' }];
+      if (!items.length && PREVIEW) items = [{ title: 'Event / venue', city: 'City', date: '', image: '', url: '#', demo: true, sub: 'Date · City' }];
       if (!items.length) return null;
       const list = h('div', 'cards');
       items.forEach(it => {
@@ -2106,7 +2106,7 @@ void main() {
         const f = h('div', 'frame');
         f.append(h('iframe', '', {
           src: `https://www.youtube.com/embed/videoseries?list=UU${ch.channel.replace(/^UC/, '')}&playsinline=1&rel=0`,
-          title: 'Ultimi video YouTube', loading: 'lazy',
+          title: 'Latest YouTube videos', loading: 'lazy',
           allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen',
           referrerpolicy: 'strict-origin-when-cross-origin', allowfullscreen: ''
         }));
