@@ -555,6 +555,13 @@
     done: 500,         // ms di "Done" prima di aprirsi
     open: 750,         // ms dell'apertura a metà
   };
+  // Il sito si apre SEMPRE dall'inizio: il browser non deve tornare dove eri
+  // rimasto né saltare a un capitolo (#presave…) rimasto nell'indirizzo.
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  window.scrollTo(0, 0);
+  addEventListener('pageshow', () => window.scrollTo(0, 0));
+
   (function () {
     const root = document.documentElement;
     const el = document.getElementById('loader');
@@ -2141,7 +2148,15 @@ void main() {
   // Attivo = l'ultimo capitolo il cui inizio è arrivato appena sotto la barra dei capitoli
   const secs = [...wrap.querySelectorAll('.section')];
   let current = null, ticking = false, picked = null;
-  chips.forEach(c => c.addEventListener('click', () => { picked = c.getAttribute('href').slice(1); }));
+  chips.forEach(c => c.addEventListener('click', e => {
+    e.preventDefault();                        // niente #capitolo nell'indirizzo
+    picked = c.getAttribute('href').slice(1);
+    document.getElementById(picked).scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }));
+  document.querySelector('.scroll-cue').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('content').scrollIntoView({ behavior: 'smooth' });
+  });
   ['wheel', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, () => { picked = null; }, { passive: true }));
   const update = () => {
     ticking = false;
