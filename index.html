@@ -358,6 +358,22 @@
       text-align: left;
       line-height: 1.35;
     }
+    /* Riga "Guarda su YouTube" sotto ogni video */
+    .video .yt-link {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 4px 0;
+      font-family: var(--font-cards);
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--mute);
+      text-decoration: none;
+      transition: color .2s ease;
+    }
+    .video .yt-link:hover, .video .yt-link:focus-visible { color: var(--text); outline: none; }
+
     .video.only { width: calc(var(--tile) * 16 / 9); }
     .video .frame.ph { display: grid; place-items: center; color: var(--mute); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; }
     .video .frame.ph::after { display: none; }
@@ -1828,6 +1844,9 @@ void main() {
       btn.replaceWith(f);
     });
     box.append(btn);
+    // Rimando al video su YouTube (su iPhone apre l'app se è installata)
+    const out = h('a', 'yt-link', { href: `https://www.youtube.com/watch?v=${v.id}`, target: '_blank', rel: 'noopener', text: 'Guarda su YouTube \u2197' });
+    box.append(out);
     return box;
   };
 
