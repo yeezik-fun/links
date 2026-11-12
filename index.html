@@ -1877,12 +1877,12 @@ void main() {
      (es. Spotify o un link unico tipo Linkfire/ToneDen).
      Una canzone senza data appare come "Coming soon". */
   const RELEASES = [
-    { title: 'Primo singolo', kind: 'Single', date: '', image: '', url: '' },
+    { title: '[unknown]', kind: 'Single', date: '', image: '', url: '' },
   ];
 
   const CHAPTERS = [
     {
-      id: 'presave', title: 'Pre-Save', type: 'feature', show: true,
+      id: 'presave', title: 'Pre-Save', type: 'feature', show: false,
       /* Quando hai un pre-save, riempi questo riquadro.
          Lascia items: [] e il capitolo resta nascosto. Esempio:
          { title: 'Nome canzone', date: '2026-12-05', image: 'images/cover.jpg',
@@ -1890,13 +1890,13 @@ void main() {
       items: [],
     },
     {
-      id: 'outnow', title: 'Out Now', type: 'latest', show: true,
+      id: 'outnow', title: 'Out Now', type: 'latest', show: false,
       // Riquadro grande con la tua ULTIMA uscita già pubblicata (da RELEASES).
       // Le canzoni senza data o con data futura non compaiono qui.
       button: 'Listen', // testo del bottone
     },
     {
-      id: 'shows', title: 'Upcoming Shows', type: 'shows', show: true,
+      id: 'shows', title: 'Upcoming Shows', type: 'shows', show: false,
       /* Una riga per evento. Le date passate spariscono da sole; senza
          eventi il capitolo resta nascosto. Esempio:
          { title: 'Nome locale', city: 'Milano', date: '2026-12-20',
@@ -1920,7 +1920,7 @@ void main() {
       ],
     },
     {
-      id: 'store', title: 'Store', type: 'products', show: true,
+      id: 'store', title: 'Store', type: 'products', show: false,
       items: [
         { title: 'Coming soon', subtitle: '—', image: '', url: '' },
         { title: 'Coming soon', subtitle: '—', image: '', url: '' },
