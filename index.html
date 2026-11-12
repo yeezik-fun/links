@@ -452,9 +452,147 @@
       .scroll-cue { animation: none; }
       html { scroll-behavior: auto !important; }
     }
+    /* =====================================================================
+       SCHERMATA DI CARICAMENTO — LatticeLoader (React Bits) in JS/CSS puro
+       Schermo scuro → "Thinking" → dopo 1s "Done" → dopo 0,5s si apre a metà
+       ===================================================================== */
+    html.is-loading, html.is-loading body { overflow: hidden; }
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      pointer-events: auto;
+    }
+    .loader-half {                       /* le due metà che si aprono */
+      position: absolute;
+      left: 0; right: 0;
+      height: 50.5%;
+      background: #0a0a0a;
+      transition: transform 0.75s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    .loader-half.top { top: 0; }
+    .loader-half.bottom { bottom: 0; }
+    .loader.open .loader-half.top { transform: translateY(-100%); }
+    .loader.open .loader-half.bottom { transform: translateY(100%); }
+    .loader.open .lattice-loader { opacity: 0; transform: scale(0.96); }
+    .loader.gone { display: none; }
+
+    .lattice-loader {
+      --ll-n: 3; --ll-cell: 6px; --ll-gap: 2px; --ll-font: 14px;
+      --ll-color: #f5f5f5; --ll-mark: #22c55e; --ll-idle: 0.15;
+      --ll-glow: #f5f5f5; --ll-mark-glow: #22c55e; --ll-peak: 1; --ll-cycle: 648ms;
+      --ll-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --ll-ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: calc(var(--ll-font) * 0.625);
+      font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: var(--ll-font);
+      line-height: 1;
+      color: var(--ll-color);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .lattice-loader__grid { display: grid; flex: none; }
+    .lattice-loader__layer { grid-area: 1 / 1; display: grid; grid-template-columns: repeat(var(--ll-n), var(--ll-cell)); gap: var(--ll-gap); }
+    .lattice-loader__cell { width: var(--ll-cell); height: var(--ll-cell); border-radius: 50%; background: var(--ll-color); opacity: var(--ll-idle); }
+    .lattice-loader[data-glow] .lattice-loader__run .lattice-loader__cell:not([data-hole]) { box-shadow: 0 0 calc(var(--ll-cell) * 1.2) calc(var(--ll-cell) * 0.12) var(--ll-glow); }
+    .lattice-loader[data-glow] .lattice-loader__mark .lattice-loader__cell[data-on] { box-shadow: 0 0 calc(var(--ll-cell) * 1.2) calc(var(--ll-cell) * 0.12) var(--ll-mark-glow); }
+    .lattice-loader__run { transition: opacity 200ms ease; }
+    .lattice-loader__run .lattice-loader__cell { animation: lattice-on var(--ll-cycle) var(--ll-ease-in-out) infinite; }
+    .lattice-loader__mark { opacity: 0; transform: scale(0.9); transform-origin: center; transition: opacity 160ms var(--ll-ease-out), transform 160ms var(--ll-ease-out); }
+    .lattice-loader__mark .lattice-loader__cell { transition: opacity 200ms ease, background-color 200ms ease; }
+    .lattice-loader__mark .lattice-loader__cell[data-on] { background: var(--ll-mark); opacity: var(--ll-peak); }
+    .lattice-loader:not([data-status='working']) .lattice-loader__run { opacity: 0; }
+    .lattice-loader:not([data-status='working']) .lattice-loader__run .lattice-loader__cell { animation-play-state: paused; }
+    .lattice-loader:not([data-status='working']) .lattice-loader__mark { opacity: 1; transform: none; transition: opacity 200ms ease, transform 200ms var(--ll-ease-out); }
+    .lattice-loader__label { position: relative; display: inline-block; font-weight: 500; }
+    .lattice-loader__text { position: absolute; top: 0; left: 0; white-space: nowrap; opacity: 0; filter: blur(2px); transition: opacity 200ms ease, filter 200ms ease; }
+    .lattice-loader__text[data-active] { position: static; opacity: 1; filter: blur(0); }
+    .lattice-loader__sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    @keyframes lattice-on { 0%, 100% { opacity: var(--ll-idle); } 18%, 42% { opacity: var(--ll-peak); } 62% { opacity: var(--ll-idle); } }
+    @media (prefers-reduced-motion: reduce) {
+      .lattice-loader__run { --ll-peak: 0.7; }
+      .lattice-loader__run .lattice-loader__cell { animation-delay: 0ms !important; animation-duration: 1400ms !important; }
+      .lattice-loader .lattice-loader__mark { transform: none; }
+      .lattice-loader .lattice-loader__text { filter: none; }
+      .loader-half { transition-duration: 0.3s; }
+    }
+
+    /* Titolo nascosto finché la schermata non si apre (tiene comunque il suo spazio) */
+    html.is-loading #title { visibility: hidden; }
+
   </style>
 </head>
 <body>
+
+  <!-- Schermata di caricamento -->
+  <div class="loader" id="loader">
+    <div class="loader-half top"></div>
+    <div class="loader-half bottom"></div>
+    <span class="lattice-loader" id="lattice" role="status" data-status="working" data-glow>
+      <span class="lattice-loader__grid" aria-hidden="true">
+        <span class="lattice-loader__layer lattice-loader__run"></span>
+        <span class="lattice-loader__layer lattice-loader__mark"></span>
+      </span>
+      <span class="lattice-loader__label" aria-hidden="true">
+        <span class="lattice-loader__text" data-active>Thinking</span>
+        <span class="lattice-loader__text">Done</span>
+      </span>
+      <span class="lattice-loader__sr">Thinking, in progress</span>
+    </span>
+  </div>
+  <script>
+  /* =====================================================================
+     SCHERMATA DI CARICAMENTO — impostazioni
+     ===================================================================== */
+  const LOADER = {
+    on: true,          // false = niente schermata
+    working: 1000,     // ms di "Thinking" prima di "Done"
+    done: 500,         // ms di "Done" prima di aprirsi
+    open: 750,         // ms dell'apertura a metà
+  };
+  (function () {
+    const root = document.documentElement;
+    const el = document.getElementById('loader');
+    let started = false;
+    const finish = () => { if (started) return; started = true; window.dispatchEvent(new Event('loader:open')); };
+    window.loaderOpened = () => started;
+    if (!LOADER.on) { el.classList.add('gone'); return; }
+    root.classList.add('is-loading');
+
+    // Pattern "ripple", griglia 3x3 (come React Bits): step 90 x scale 1.5
+    const cells = [2, 1, 2, 1, 0, 1, 2, 1, 2], d = 90 * 1.5;
+    const DONE = [2, 3, 5, 7];                 // celle accese della spunta
+    const ll = document.getElementById('lattice');
+    ll.style.setProperty('--ll-cycle', Math.round(4.8 * d) + 'ms');
+    const run = ll.querySelector('.lattice-loader__run');
+    const mark = ll.querySelector('.lattice-loader__mark');
+    cells.forEach((u, i) => {
+      const c = document.createElement('span'); c.className = 'lattice-loader__cell';
+      c.style.animationDelay = Math.round(u * d) + 'ms'; run.append(c);
+      const m = document.createElement('span'); m.className = 'lattice-loader__cell';
+      if (DONE.includes(i)) m.setAttribute('data-on', ''); mark.append(m);
+    });
+    const [tWork, tDone] = ll.querySelectorAll('.lattice-loader__text');
+    const sr = ll.querySelector('.lattice-loader__sr');
+
+    setTimeout(() => {                         // → Done
+      ll.dataset.status = 'done';
+      tWork.removeAttribute('data-active'); tDone.setAttribute('data-active', '');
+      sr.textContent = 'Done';
+      setTimeout(() => {                       // → si apre a metà
+        el.classList.add('open');
+        root.classList.remove('is-loading');
+        finish();
+        setTimeout(() => el.classList.add('gone'), LOADER.open + 50);
+      }, LOADER.done);
+    }, LOADER.working);
+  })();
+  </script>
 
   <!-- Sfondo animato -->
   <div id="bg"></div>
@@ -462,7 +600,7 @@
   <!-- Schermo iniziale: nome, sottotitolo, social -->
   <header class="hero">
     <div class="hero-id">
-      <h1 id="title"></h1>
+      <h1 id="title">YEEZIK</h1>
       <p class="tagline">DJ &amp; Music Producer</p>
       <nav class="socials" id="socials" aria-label="Social"></nav>
     </div>
@@ -1641,7 +1779,8 @@ void main() {
   /* =====================================================================
      TITOLO — impostazioni del tuo "Usage", modificale qui
      ===================================================================== */
-  createDecryptedText(document.getElementById('title'), {
+  // Parte quando la schermata di caricamento si apre
+  const startTitle = () => { const t = document.getElementById('title'); t.textContent = ''; createDecryptedText(t, {
     text: 'YEEZIK',
     animateOn: 'inViewHover',  // 'hover' | 'view' | 'inViewHover' | 'click'
     effect: 'scramble',        // 'scramble' | 'fade'
@@ -1659,7 +1798,9 @@ void main() {
     className: 'revealed',
     encryptedClassName: 'encrypted',
     clickMode: 'once'
-  });
+  }); };
+  if (window.loaderOpened && !window.loaderOpened()) addEventListener('loader:open', startTitle, { once: true });
+  else startTitle();
   </script>
   <script>
   /* =====================================================================
