@@ -82,6 +82,15 @@
       font-display: swap;
     }
 
+    /* ===== HELVETICA NOW TEXT (Monotype) — font del testo nelle schede ===== */
+    @font-face {
+      font-family: "Helvetica Now Text";
+      src: url("fonts/HelveticaNowText-Bold.woff") format("woff");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
     h1 {
       font-family: "Moderniz", "Helvetica Now Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
       font-size: clamp(3rem, 12vw, 9rem);
@@ -117,6 +126,16 @@
       --mute: rgba(246, 248, 255, 0.55);
       --accent: #38bdf8;      /* azzurro dello sfondo ASCII */
       --gutter: 16px;
+      /* Font del testo dentro le schede (card, video, merch) */
+      --font-cards: "Helvetica Now Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    /* Testo delle schede in Helvetica Now Text Bold */
+    .card .t, .card .s, .card .go,
+    .video .vt, .video .frame.ph,
+    .product .t, .product .s {
+      font-family: var(--font-cards);
+      font-weight: 700;
     }
 
     /* Blocco nome + sottotitolo: resta centrato al 65%, i social stanno sotto */
