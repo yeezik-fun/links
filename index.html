@@ -1384,7 +1384,8 @@ void main() {
   /* =====================================================================
      IMPOSTAZIONI — stesse del tuo "Usage", modificale qui
      ===================================================================== */
-  createGradientASCII(document.getElementById('bg'), {
+  // Parte da capo quando la schermata di caricamento si apre (insieme allo scramble)
+  const startBg = () => createGradientASCII(document.getElementById('bg'), {
     colors: ['#1e3fd8', '#f6f8ff', '#a5d8ff', '#38bdf8'],
     shape: 'horizon',          // 'horizon' | 'pinch' | 'rise' | 'eclipse'
     characters: ' IYXK2Z0E@', // YEEZIK + X @ 2 0, dal più "leggero" al più "pieno"
@@ -1407,6 +1408,8 @@ void main() {
     intro: true,
     lightMode: false
   });
+  if (window.loaderOpened && !window.loaderOpened()) addEventListener('loader:open', startBg, { once: true });
+  else startBg();
   </script>
 
   <script>
