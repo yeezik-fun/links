@@ -373,11 +373,11 @@
       <p class="tagline">DJ &amp; Music Producer</p>
       <nav class="socials" id="socials" aria-label="Social"></nav>
     </div>
-    <a class="scroll-cue" href="#sections">Scroll &darr;</a>
+    <a class="scroll-cue" href="#content">Scroll &darr;</a>
   </header>
 
   <!-- Parte bassa: barra dei capitoli + sezioni (si riempiono da CONTENUTI) -->
-  <main class="content">
+  <main class="content" id="content">
     <nav class="chapters" id="chapters" aria-label="Capitoli"></nav>
     <div id="sections"></div>
     <footer class="foot">&copy;2026 Yeezik</footer>
@@ -1773,7 +1773,7 @@ void main() {
     c.classList.toggle('active', on);
     if (on) bar.scrollTo({ left: c.offsetLeft - 16, behavior: 'smooth' });
   });
-  // Attivo = l'ultimo capitolo il cui titolo ha superato il terzo alto dello schermo
+  // Attivo = l'ultimo capitolo il cui inizio è arrivato appena sotto la barra dei capitoli
   const secs = [...wrap.querySelectorAll('.section')];
   let current = null, ticking = false, picked = null;
   chips.forEach(c => c.addEventListener('click', () => { picked = c.getAttribute('href').slice(1); }));
@@ -1781,7 +1781,8 @@ void main() {
   const update = () => {
     ticking = false;
     let id = secs[0] && secs[0].id;
-    for (const s of secs) if (s.getBoundingClientRect().top <= innerHeight * 0.33) id = s.id;
+    const line = bar.getBoundingClientRect().bottom + 24;
+    for (const s of secs) if (s.getBoundingClientRect().top <= line) id = s.id;
     // In fondo alla pagina: tiene il capitolo che hai toccato, altrimenti l'ultimo
     if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4 && secs.length) id = picked || secs[secs.length - 1].id;
     if (id !== current) { current = id; setActive(id); }
