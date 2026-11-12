@@ -396,6 +396,16 @@
     }
     .feature .t, .feature .s, .feature .cta { font-family: var(--font-cards); font-weight: 700; }
 
+    /* Etichetta "ESEMPIO" sui riquadri finti dell'anteprima */
+    .thumb span.demo-tag, .thumb.ph span.demo-tag {
+      position: absolute; top: 8px; left: 8px; z-index: 1;
+      opacity: 1; line-height: 1;
+      padding: 4px 7px; border-radius: 6px;
+      background: var(--accent); color: #000;
+      font-family: var(--font-cards); font-weight: 700;
+      font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
     /* Pulsante a destra nelle card (es. "Tickets") */
     .card .go { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
 
@@ -1654,6 +1664,12 @@ void main() {
        image: 'images/nomefile.jpg'. Vuoto = segnaposto "YZK".
      DATE: sempre nel formato 'AAAA-MM-GG' (es. '2026-12-05').
      ===================================================================== */
+  /* ANTEPRIMA
+     true  = si vedono TUTTI i capitoli: quelli vuoti mostrano un riquadro
+             d'esempio con l'etichetta "ESEMPIO" (per lavorare al design).
+     false = sito vero: i capitoli vuoti si nascondono da soli. */
+  const PREVIEW = true;
+
   const SOCIALS = [
     { icon: 'instagram',  url: 'https://www.instagram.com/iamyeezik/' },
     { icon: 'tiktok',     url: '' },
@@ -1818,7 +1834,7 @@ void main() {
 
   const cardEl = (it, sub) => {
     const c = linkOrBox(it.url, 'card');
-    c.append(thumb(it.image));
+    c.append(demoTag(thumb(it.image), it));
     const body = h('div', 'body');
     body.append(h('span', 't', { text: it.title || '' }));
     if (sub) body.append(h('span', 's', { text: sub }));
@@ -1835,9 +1851,10 @@ void main() {
   };
 
   // Riquadro grande: artwork quadrato, titolo, data, bottone bianco
+  const demoTag = (el, it) => { if (it.demo) el.append(h('span', 'demo-tag', { text: 'Esempio' })); return el; };
   const featureEl = (it, sub, button) => {
     const f = linkOrBox(it.url, 'feature');
-    f.append(thumb(it.image, 'thumb art'));
+    f.append(demoTag(thumb(it.image, 'thumb art'), it));
     const body = h('div', 'body');
     body.append(h('span', 't', { text: it.title || '' }));
     if (sub) body.append(h('span', 's', { text: sub }));
@@ -1849,15 +1866,17 @@ void main() {
   // Ogni tipo di capitolo: cosa mostra e quando è "vuoto"
   const BUILDERS = {
     feature(ch) {
-      const items = ch.items || [];
+      let items = ch.items || [];
+      if (!items.length && PREVIEW) items = [{ title: 'Nome canzone', date: '', image: '', url: '#', button: 'Pre-save', demo: true, sub: 'Out · data di uscita' }];
       if (!items.length) return null;
       const list = h('div', 'features');
-      items.forEach(it => list.append(featureEl(it, (parseDate(it.date) > today ? 'Out ' : '') + fmtDate(it.date), it.button || 'Pre-save')));
+      items.forEach(it => list.append(featureEl(it, it.sub || (parseDate(it.date) > today ? 'Out ' : '') + fmtDate(it.date), it.button || 'Pre-save')));
       return list;
     },
     latest(ch) {
       // Ultima uscita già pubblicata (data di oggi o passata)
-      const r = releasesSorted.find(x => { const d = parseDate(x.date); return d && d <= today; });
+      let r = releasesSorted.find(x => { const d = parseDate(x.date); return d && d <= today; });
+      if (!r && PREVIEW) r = { ...(releasesSorted[0] || { title: 'Nome canzone', kind: 'Single' }), url: '#', demo: true };
       if (!r) return null;
       const list = h('div', 'features');
       list.append(featureEl(r, releaseSub(r), r.button || ch.button || 'Listen'));
@@ -1870,13 +1889,14 @@ void main() {
       return rail;
     },
     shows(ch) {
-      const items = (ch.items || [])
+      let items = (ch.items || [])
         .filter(it => { const d = parseDate(it.date); return !d || d >= today; })
         .sort((a, b) => (parseDate(a.date) || 0) - (parseDate(b.date) || 0));
+      if (!items.length && PREVIEW) items = [{ title: 'Nome evento / locale', city: 'Città', date: '', image: '', url: '#', demo: true, sub: 'Data · Città' }];
       if (!items.length) return null;
       const list = h('div', 'cards');
       items.forEach(it => {
-        const sub = [fmtDate(it.date), it.city].filter(Boolean).join(' · ');
+        const sub = it.sub || [fmtDate(it.date), it.city].filter(Boolean).join(' · ');
         list.append(cardEl({ ...it, button: it.url ? (it.button || 'Tickets ↗') : '' }, sub));
       });
       return list;
