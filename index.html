@@ -252,7 +252,7 @@
     }
     .section .note { color: var(--mute); font-size: 0.75rem; margin: -8px 0 16px; letter-spacing: 0.04em; }
 
-    /* --- Card con immagine a sinistra (Listen Now, Events…) --- */
+    /* --- Card con immagine a sinistra (Releases, Shows…) --- */
     .cards { display: flex; flex-direction: column; gap: 12px; }
     .card {
       display: flex;
@@ -395,6 +395,11 @@
       text-transform: uppercase;
     }
     .feature .t, .feature .s, .feature .cta { font-family: var(--font-cards); font-weight: 700; }
+
+    /* Card alte (Releases): artwork quadrato grande come in Out Now */
+    .cards.tall .card { min-height: 0; }
+    .cards.tall .card .thumb { width: 42%; aspect-ratio: 1; }
+    .cards.tall .card .t { font-size: 1rem; }
 
     /* Pulsante a destra nelle card (es. "Tickets") */
     .card .go { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
@@ -1666,7 +1671,7 @@ void main() {
 
   /* LE TUE USCITE — una riga per canzone, in qualsiasi ordine:
      il sito le mette da solo dalla più nuova alla più vecchia.
-     Le usano sia "Listen Now" (le ultime) sia "Releases" (tutte).
+     Le usano sia "Out Now" (le ultime) sia "Releases" (tutte).
      kind: 'Single', 'EP', 'Album', 'Remix'…   url: link della canzone
      (es. Spotify o un link unico tipo Linkfire/ToneDen).
      Una canzone senza data appare come "Coming soon". */
@@ -1684,7 +1689,7 @@ void main() {
       items: [],
     },
     {
-      id: 'listen', title: 'Listen Now', type: 'latest', show: true,
+      id: 'outnow', title: 'Out Now', type: 'latest', show: true,
       limit: 6, // quante uscite mostrare nel carosello
     },
     {
@@ -1860,7 +1865,7 @@ void main() {
     },
     releases() {
       if (!releasesSorted.length) return null;
-      const list = h('div', 'cards');
+      const list = h('div', 'cards tall');
       releasesSorted.forEach(r => list.append(cardEl(r, releaseSub(r))));
       return list;
     },
